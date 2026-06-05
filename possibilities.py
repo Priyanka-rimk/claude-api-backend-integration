@@ -3,7 +3,7 @@ All 50 StrokeCare possibilities with their fields,
 system prompts, models, and validation rules.
 """
 
-POSSIBILITIES = {
+POSSIBILITIES = { 
 
     "P1": {
         "name": "Personalised check-in question",
