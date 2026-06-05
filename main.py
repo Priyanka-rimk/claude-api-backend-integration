@@ -49,7 +49,11 @@ def build_user_prompt(template: str, inputs: dict) -> str:
     try:
         return template.format(**inputs)
     except KeyError as e:
-        return template
+        # Fill missing keys with empty string instead of failing silently
+        from string import Formatter
+        keys = [fname for _, fname, _, _ in Formatter().parse(template) if fname]
+        safe_inputs = {k: inputs.get(k, "") for k in keys}
+        return template.format(**safe_inputs)
 
 
 def run_safety_checks(text: str, config: dict) -> dict:
@@ -241,6 +245,7 @@ async def run_possibility(req: RunRequest, db: AsyncSession = Depends(get_db)):
 
     try:
         # First Claude call
+        print(user_prompt)
         output, tokens_in, tokens_out = call_claude(
             system_prompt, user_prompt, model, max_tokens
         )
